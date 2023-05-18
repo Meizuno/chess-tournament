@@ -56,4 +56,3 @@ class Result(models.Model):
     tie_break1 = models.FloatField("Tie Break 1", default=0.0)
     tie_break2 = models.FloatField("Tie Break 1", default=0.0)
     tie_break3 = models.FloatField("Tie Break 1", default=0.0)
-
