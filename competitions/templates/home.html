@@ -1,0 +1,34 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+
+
+
+<div id="home" class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{% static 'images/chessboard-g95f450f98_640.png' %}" class="img-fluid rounded py-5 px-5" alt="">
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+  new Vue({
+    el: '#home',
+    data: {
+      lang: "{{ request.COOKIES.lang }}"
+    },
+    created() {
+      console.log('Language:', this.lang);
+    }
+  });
+</script>
+
+{% endblock %}

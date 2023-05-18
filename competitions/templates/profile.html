@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block main %}
+
+{% verbatim %}
+
+<div id="profile">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="row g-0">
+                    <div class="col-md-4 px-2 py-2">
+                        <img :src="player.photo" class="photo card-img" alt="" />
+                    </div>
+                    <div class="col-md-8 px-2 py-2">
+                    <div class="card-body card container card-tour-detail">
+                        <div class="card-header">
+                            <h2 class="card-title">Name -- {{ player.full_name }}</h2>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><i class="fas fa-user icon"></i> {{ player.username }}</li>
+                            <li class="list-group-item"><i class="fas fa-envelope icon"></i> {{ player.email }}</li>
+                            <li class="list-group-item"><i class="far fa-calendar-alt icon"></i> {{ player.date_of_birth }}</li>
+                            <li class="list-group-item"><i class="fas fa-globe icon"></i> {{ player.country }}</li>
+                            <li class="list-group-item"><i class="fas fa-star icon"></i> {{ player.rating }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        {% endverbatim %}
+
+        {% if user.is_authenticated and player_unique_id == user.unique_id %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success" name="edit">Edit</button>
+                <button type="submit" class="btn btn-danger" name="logout">Log out</button>
+            </form>
+        {% endif %}
+
+        {% verbatim %}
+
+            <ul class="nav nav-tabs nav-fill d-flex justify-content-center mt-4" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#participant" type="button" role="tab" aria-controls="home" aria-selected="true">Participant</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#organizer" type="button" role="tab" aria-controls="contact" aria-selected="false">Tournament Organizer</button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="participant" role="tabpanel" aria-labelledby="home-tab">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Place</th>
+                                <th scope="col">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(tournament, index) in participant" @click="redirectToTournament(tournament.unique_id)" class="link">
+                                <th>{{ index + 1 }}</th>
+                                <td>{{ tournament.name }}</td>
+                                <td>{{ tournament.place }}</td>
+                                <td>Result</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="organizer" role="tabpanel" aria-labelledby="contact-tab">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Place</th>
+                                <th scope="col">Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(tournament, index) in organizer" @click="redirectToTournament(tournament.unique_id)" class="link">
+                                <th>{{ index + 1 }}</th>
+                                <td>{{ tournament.name }}</td>
+                                <td>{{ tournament.place }}</td>
+                                <td>Result</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endverbatim %}
+
+<script src="/static/scripts/profile.js"></script>
+
+{% endblock %}

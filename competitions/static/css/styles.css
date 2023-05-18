@@ -1,0 +1,35 @@
+.card-tour-list{
+    border-width: 2px;
+}
+
+.card-tour-list:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+  border-color: black;
+}
+
+.card-tour-list:hover svg {
+  fill: black;
+}
+
+.card-tour-detail{
+    padding: 0px;
+    border-width: 0px;
+}
+
+.icon {
+    margin-right: 10px;
+}
+
+.errorlist{
+    margin: 0;
+}
+
+tr.link:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.photo {
+  object-fit: cover;
+}
