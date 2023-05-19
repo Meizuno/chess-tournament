@@ -33,3 +33,8 @@ tr.link:hover {
 .photo {
   object-fit: cover;
 }
+
+.hover-zoom:hover {
+  transform: scale(1.03);
+  transition: transform 0.3s ease;
+}
