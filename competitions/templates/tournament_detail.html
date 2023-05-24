@@ -8,29 +8,56 @@
 
 {% verbatim %}
 
-<div id="tournament_detail">
-    <div class="card container card-tour-detail">
-        <div class="card-header">
-            <h2 class="card-title"><i class="fas fa-trophy icon"></i>Name -- {{ tournament.name }}</h2>
+<div id="tournament_detail" class="d-flex flex-column align-items-center mt-4">
+    <div class="card info">
+        <div class="card-header d-flex align-self-stretch align-items-center">
+            <h2 class="card-title"><i class="fas fa-trophy icon"></i>{{ tournament.name }}</h2>
+
+            {% endverbatim %}
+            <form method="post" class="ms-auto p-2">
+                {% csrf_token %}
+                {% if join %}
+                    {% verbatim %}
+                    <button v-if="tournament.capacity > players.length" style="background-color: #AD815E;" title="Join to the tournament" class="btn" type="submit" name="register">Join</i></button>
+                    {% endverbatim %}
+                {% else %}
+                    <button class="btn" type="submit" name="unregister" style="background-color: #AD815E;" title="Leave the tournament">Leave</i></button>
+                {% endif %}
+            </form>
+            {% verbatim %}
+
         </div>
+
         <ul class="list-group list-group-flush">
             <li class="list-group-item"><i class="fas fa-map-marker-alt icon"></i>{{ tournament.place }}</li>
             <li v-if="tournament.description" class="list-group-item"><i class="fas fa-info-circle icon"></i>{{ tournament.description }}</li>
             <li class="list-group-item"><i class="fas fa-users icon"></i>{{ tournament.capacity }}</li>
+            <li class="list-group-item" v-if="tournament.system == 'swiss'"><i class="fas fa-retweet icon"></i>Swiss System</li>
+            <li class="list-group-item" v-else><i class="fas fa-retweet icon"></i>Round-robin System</li>
             <li class="list-group-item">
                 <i class="fas fa-calendar-alt icon"></i>
                 {{ formatDateTime(tournament.date_of_start) }} - {{ formatDateTime(tournament.date_of_end) }}
             </li>
-            <li class="list-group-item">
+            <li class="list-group-item d-flex align-self-stretch align-items-center">
                 <i class="fas fa-crown icon"></i>
-                <span>
-                    {{ organizers.map(organizer => organizer.full_name).join(', ') }}
-                </span>
+                <span v-html="organizers.map(organizer => `<a class='user' href='/profile/${organizer.unique_id}/'>${organizer.full_name}</a>`).join(', ')"></span>
+
+                {% endverbatim %}
+                {% if request.user.is_authenticated and opened and organizer %}
+                    <form method="post" action="" class="ms-auto">
+                        {% csrf_token %}
+                        <button class="btn" type="submit" name="start" title="Start the tournament" onclick="return confirm('Are you sure you want to start the tournament?')"><i class="fas fa-play fs-5"></i></button>
+                        <button class="btn" type="submit" name="edit" title="Edit the tournament"><i class="fas fa-pencil-alt fs-5"></i></button>
+                        <button class="btn" type="submit" name="remove" title="Remove the tournament" onclick="return confirm('Are you sure you want to remove the tournament?')"><i class="fas fa-trash fs-5"></i></button>
+                    </form>
+                {% endif %}
+                {% verbatim %}
+
             </li>
         </ul>
     </div>
 
-<table class="table container">
+<table class="table container mt-4 info rounded">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -39,18 +66,37 @@
             <th v-if="innerWidth >= 992">Email</th>  <th v-else class="d-none"></th>
             <th scope="col">Country</th>
             <th scope="col">Rating</th>
+            {% endverbatim %}
+            {% if request.user.is_authenticated and opened and organizer %}
+            <th scope="col"></th>
+            {% endif %}
+            {% verbatim %}
         </tr>
     </thead>
     <tbody>
         <tr v-for="(player, index) in players">
             <th>{{ index + 1 }}</th>
             <td>
-                <a class="nav-link active" :href="`/profile/${player.unique_id}/`">{{ player.full_name }}</a>
+                <a class="user" :href="`/profile/${player.unique_id}/`">{{ player.full_name }}</a>
             </td>
             <td>{{ player.date_of_birth }}</td>
             <td v-if="innerWidth >= 992">{{ player.email }}</td> <td v-else class="d-none"></td>
             <td>{{ player.country }}</td>
             <td>{{ player.rating }}</td>
+            {% endverbatim %}
+            {% if request.user.is_authenticated and opened and organizer %}
+
+            <td class="d-flex justify-content-center">
+                <form method="post">
+                    {% csrf_token %}
+                    {% verbatim %}
+                    <input type="hidden" name="player_id" :value="player.id">
+                    <button class="btn p-0" title="Remove player" name="removePlayer"><i class="fas fa-times text-danger"></i></button>
+                </form>
+            </td>
+            {% endverbatim %}
+            {% endif %}
+            {% verbatim %}
         </tr>
     </tbody>
 </table>
@@ -58,18 +104,6 @@
 
 {% endverbatim %}
 
-{% if request.user.is_authenticated and opened %}
-    <form method="post" action="">
-        {% csrf_token %}
-        <button class="btn btn-success" type="submit" name="register">Register</button>
-        <button class="btn btn-danger" type="submit" name="unregister">Unregister</button>
-        {% if organizer %}
-            <button class="btn btn-success" type="submit" name="start">Start</button>
-            <button class="btn btn-info" type="submit" name="edit">Edit</button>
-            <button class="btn btn-danger" type="submit" name="remove">Remove</button>
-        {% endif %}
-    </form>
-{% endif %}
 
 <script src="/static/scripts/tournament_detail.js"></script>
 

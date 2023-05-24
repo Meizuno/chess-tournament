@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.utils.crypto import get_random_string
 from rest_framework import status
 from rest_framework.views import APIView
+from django.contrib.auth.hashers import make_password
 
 from main.forms import *
 from main.models import Tournament, Player
@@ -57,8 +58,17 @@ def tournament_detail_page(request, tournament_unique_id):
             tournament = Tournament.objects.get(unique_id=tournament_unique_id)
             tournament.delete()
             return redirect('/tournaments')
+        elif 'removePlayer' in request.POST:
+            player_id = request.POST.get('player_id')
+            player = Player.objects.get(id=player_id)
+            tournament.players.remove(player)
+            tournament.save()
+            print("asdsd")
+
     opened = tournament.opened
-    return render(request, 'tournament_detail.html', {'opened': opened, 'organizer': organizer})
+    join = not tournament.players.filter(id=request.user.id).exists()
+
+    return render(request, 'tournament_detail.html', {'opened': opened, 'organizer': organizer, 'join': join})
 
 
 def tournament_edit_page(request, tournament_unique_id):
@@ -67,6 +77,12 @@ def tournament_edit_page(request, tournament_unique_id):
         if 'edit' in request.POST:
             if form.is_valid():
                 form.save()
+                new_organizer_username = form.cleaned_data['new_organizer']
+                if new_organizer_username:
+                    tournament = Tournament.objects.get(unique_id=tournament_unique_id)
+                    player = Player.objects.get(username=new_organizer_username)
+                    tournament.organizers.add(player)
+                    tournament.save()
                 return redirect(f'/tournaments/{tournament_unique_id}')
     else:
         form = TournamentEditForm(instance=Tournament.objects.get(unique_id=tournament_unique_id))
@@ -115,12 +131,16 @@ def signup_page(request):
         if form.is_valid():
             player = form.save(commit=False)
             player.unique_id = get_random_string(length=8)
+            player.password = make_password(form.cleaned_data.get('password1'))
             player.save()
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)
             return redirect('/')
+        else:
+            print(form.errors)
+            return render(request, 'signup.html', {'form': form})
     else:
         form = PlayerSignUpForm()
     return render(request, 'signup.html', {'form': form})

@@ -1,9 +1,21 @@
+body{
+    background-color: #FFF1DC;
+}
+
+.card{
+    background-color: #F2DAB6;
+}
+
+.card-title{
+    margin: 0;
+}
+
 .card-tour-list{
     border-width: 2px;
 }
 
 .card-tour-list:hover {
-  background-color: #f8f9fa;
+  background-color: #F2DAB6;
   cursor: pointer;
   border-color: black;
 }
@@ -23,10 +35,15 @@
 
 .errorlist{
     margin: 0;
+    padding-left: 40px;
+}
+
+.errorlist > li{
+    color: red;
 }
 
 tr.link:hover {
-    background-color: #f8f9fa;
+    background-color: #E5C1A4;
     cursor: pointer;
 }
 
@@ -35,6 +52,61 @@ tr.link:hover {
 }
 
 .hover-zoom:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
   transition: transform 0.3s ease;
+}
+
+.img-thumbnail {
+    background-color: #48392E;
+    border-color: #48392E;
+  }
+
+.list-group-item{
+    background-color: #F2DAB6;
+    border: 0;
+}
+
+.card-header{
+    border: 0;
+    background-color: #F2DAB6;
+}
+
+.nav-tabs{
+    border: 0;
+}
+
+.nav-tabs .nav-link.active{
+    background-color: #F2DAB6;
+    border: 0;
+}
+
+.table{
+    background-color: #F2DAB6;
+}
+
+button[aria-selected="false"]{
+    color: black;
+}
+
+.info{
+    width: 66%;
+}
+
+.btn-true{
+    background-color: #AD815E;
+    color: black;
+}
+
+.btn-false{
+    background-color: #8B4513;
+    color: black;
+}
+
+.user{
+    text-decoration: none;
+    color: #53504C;
+}
+
+.user:hover{
+    color: black;
 }

@@ -19,6 +19,7 @@ class PlayerLoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['style'] = "background-color: #EEEEEE;"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -37,7 +38,9 @@ class PlayerLoginForm(AuthenticationForm):
         return cleaned_data
 
 
-class PlayerSignUpForm(UserCreationForm):
+class PlayerSignUpForm(forms.ModelForm):
+    password1 = forms.CharField(strip=False, widget=forms.PasswordInput())
+    password2 = forms.CharField(strip=False, widget=forms.PasswordInput())
     date_of_birth = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
 
     def __init__(self, *args, **kwargs):
@@ -47,6 +50,7 @@ class PlayerSignUpForm(UserCreationForm):
                 field.widget.attrs['class'] = 'form-select'
             else:
                 field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['style'] = "background-color: #EEEEEE;"
 
     class Meta:
         model = Player
@@ -124,7 +128,7 @@ class PlayerSignUpForm(UserCreationForm):
     def clean_country(self):
         cleaned_data = super().clean()
         country = cleaned_data.get('country')
-        if country and not re.match(r'^[A-Z]{3}$', country):
+        if country and not re.match(r'^[A-Z]{2,3}$', country):
             self.fields['country'].widget.attrs.update({'class': 'form-control is-invalid'})
             self.add_error('country', 'Country should consist of 3 uppercase letters, e.g. \'USA\'')
         else:
@@ -137,6 +141,7 @@ class PlayerEditForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['style'] = "background-color: #EEEEEE;"
 
     def clean_username(self):
         cleaned_data = super().clean()
@@ -211,7 +216,11 @@ class TournamentNewForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
+            if field.widget.__class__.__name__ == 'Select':
+                field.widget.attrs['class'] = 'form-select'
+            else:
+                field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['style'] = "background-color: #EEEEEE;"
 
     def clean(self):
 
@@ -252,7 +261,7 @@ class TournamentNewForm(forms.ModelForm):
 
     class Meta:
         model = Tournament
-        fields = ['name', 'place', 'description', 'capacity', 'date_of_start', 'date_of_end']
+        fields = ['name', 'place', 'description', 'capacity', 'date_of_start', 'date_of_end', 'system']
         widgets = {
             'capacity': forms.TextInput(attrs={'type': 'number'}),
             'date_of_start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -262,10 +271,16 @@ class TournamentNewForm(forms.ModelForm):
 
 
 class TournamentEditForm(forms.ModelForm):
+    new_organizer = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Enter organizer\'s username'}))
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
+            if field.widget.__class__.__name__ == 'Select':
+                field.widget.attrs['class'] = 'form-select'
+            else:
+                field.widget.attrs['class'] = 'form-control'
+            field.widget.attrs['style'] = "background-color: #EEEEEE;"
 
     def clean(self):
 
@@ -304,9 +319,19 @@ class TournamentEditForm(forms.ModelForm):
             self.fields['capacity'].widget.attrs.update({'class': 'form-control is-valid'})
         return capacity
 
+    def clean_new_organizer(self):
+        new_organizer = self.cleaned_data['new_organizer']
+        if not new_organizer or Player.objects.filter(username=new_organizer).exists():
+            self.fields['new_organizer'].widget.attrs.update({'class': 'form-control is-valid'})
+        else:
+            self.fields['new_organizer'].widget.attrs.update({'class': 'form-control is-invalid'})
+            self.add_error('new_organizer', 'This username does not exists.')
+
+        return new_organizer
+
     class Meta:
         model = Tournament
-        fields = ['name', 'place', 'description', 'capacity', 'date_of_start', 'date_of_end', 'players', 'organizers']
+        fields = ['name', 'place', 'description', 'capacity', 'date_of_start', 'date_of_end', 'new_organizer', 'system']
         widgets = {
             'capacity': forms.TextInput(attrs={'type': 'number'}),
             'date_of_start': forms.DateTimeInput(attrs={'type': 'datetime-local'}),

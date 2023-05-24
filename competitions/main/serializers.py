@@ -32,6 +32,7 @@ class TournamentSerializer(serializers.Serializer):
     date_of_start = serializers.DateTimeField()
     date_of_end = serializers.DateTimeField()
     opened = serializers.BooleanField()
+    system = serializers.CharField(required=False)
     players = PlayerSerializer(many=True)
     organizers = PlayerSerializer(many=True)
 

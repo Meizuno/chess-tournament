@@ -15,6 +15,9 @@ new Vue({
         const formattedDate = datetime.toLocaleDateString(undefined, dateOptions);
         const formattedTime = datetime.toLocaleTimeString(undefined, timeOptions);
         return `${formattedDate} ${formattedTime}`;
+      },
+      removePlayer(id){
+        console.log(id);
       }
     },
     created: function(){

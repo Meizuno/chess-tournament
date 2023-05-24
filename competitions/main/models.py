@@ -35,6 +35,7 @@ class Tournament(models.Model):
     date_of_start = models.DateTimeField("Start")
     date_of_end = models.DateTimeField("End")
     opened = models.BooleanField("Registration", default=True)
+    system = models.CharField("System", max_length=5, choices=(('swiss', 'Swiss System'), ('robin', 'Round-robin System')), default='swiss')
     players = models.ManyToManyField(Player, blank=True)
     organizers = models.ManyToManyField(Player, related_name='organized_tournaments')
 
